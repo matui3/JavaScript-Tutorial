@@ -6,6 +6,8 @@ let score = document.querySelector('#score')
 
 let result = 0;
 let hitPosition;
+let currentTime = 60;
+let timerId = null;
 
 function randomSquare() {
     squares.forEach(square => {
@@ -37,4 +39,15 @@ squares.forEach(square => {
 
 moveMole(); 
 
-// randomSquare()
+function countDown() {
+    currentTime--
+    timeLeft.textContent = currentTime
+
+    if (currentTime == 0) {
+        clearInterval(countDownTimerId)
+        clearInterval(timerId)
+        alert('GAME OVER! Your final score is' + result)
+    }
+}
+
+let countDownTimerId = setInterval(countDown, 1000)
