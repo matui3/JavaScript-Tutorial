@@ -5,6 +5,7 @@ let timeLeft = document.querySelector('#time-left')
 let score = document.querySelector('#score')
 
 let result = 0;
+let hitPosition;
 
 function randomSquare() {
     squares.forEach(square => {
@@ -13,8 +14,9 @@ function randomSquare() {
 
 
     let randomSquare = squares[Math.floor(Math.random() * 9)]
-    console.log(Math.floor(Math.random() * 9))
     randomSquare.classList.add('mole')
+
+    hitPosition = randomSquare.id;
 }
 
 function moveMole() {
@@ -22,6 +24,16 @@ function moveMole() {
     timerId = setInterval(randomSquare, 500)
 }
 
+squares.forEach(square => {
+    square.addEventListener('mousedown', () => {
+        if (square.id == hitPosition) {
+            result++;
+            console.log(result);
+            score.textContent = result;
+            hitPosition = null;
+        }
+    })
+})
 
 moveMole(); 
 
