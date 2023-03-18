@@ -1,8 +1,17 @@
 let grid = document.querySelector('.grid')
 
+const scoreDisplay = document.querySelector('#score')
+
 const blockWidth = 100;
 const blockHeight = 20;
+const ballDiameter = 20;
 const boardWidth = 560;
+const boardHeight = 300;
+
+let timerId;
+
+let xDirection = 2;
+let yDirection = 2;
 
 const userStart = [230, 10]
 let currentPosition = userStart;
@@ -93,9 +102,72 @@ document.addEventListener('keydown', moveUser)
 const ball = document.createElement('div')
 ball.classList.add('ball')
 drawBall()
+// ball.textContent = 'blah'
 grid.appendChild(ball)
+
 
 // move ball
 function moveBall() {
-    
+    ballCurrentPosition[0] += xDirection;
+    ballCurrentPosition[1] += yDirection;
+    drawBall();
+    checkForCollisions();
 }
+
+timerId = setInterval(moveBall, 30)
+
+// check for collisions
+function checkForCollisions() {
+    // check for block collisions
+    for (let i = 0; i < blocks.length; i++)
+
+
+    // check for wall collisions
+    if (ballCurrentPosition[0] >= (boardWidth - ballDiameter)) { // right side
+        if (xDirection === 2 && yDirection === 2) {
+            xDirection = -2;
+        } else if (xDirection === 2 && yDirection === -2) {
+            xDirection = -2;
+        }
+    }
+    if (ballCurrentPosition[1] >= (boardHeight - ballDiameter)) { // top of the box
+        if (xDirection === 2 && yDirection === 2) {
+            yDirection = -2;
+        } else if (xDirection === -2 && yDirection === 2) {
+            yDirection = -2;
+        }
+    }
+    if (ballCurrentPosition[0] <= 0) { // left side of box
+        if (xDirection === -2 && yDirection === 2) {
+            xDirection = 2;
+        } else if (xDirection === -2 && yDirection === -2) {
+            xDirection = 2;
+        }
+    }
+
+    // check gameOver
+    if (ballCurrentPosition[1] <= 0) {
+        clearInterval(timerId)
+        scoreDisplay.innerHTML = 'You lose'
+        document.removeEventListener('keydown', moveUser)
+    }
+}
+
+// function changeDirection() {
+//     if (xDirection === 2 && yDirection === 2) { // top part of wall
+//         yDirection = -2;
+//         return;
+//     }
+//     if (xDirection === 2 && yDirection === -2) { // left side of board coming down
+//         xDirection = -2;
+//         return;
+//     }
+//     if (xDirection === -2 && yDirection === -2) { // top of board
+//         yDirection = 2;
+//         return;
+//     }
+//     if (xDirection === -2 && yDirection === 2) {
+//         xDirection = 2;
+//         return;
+//     }
+// }
