@@ -12,6 +12,7 @@ let timerId;
 
 let xDirection = 2;
 let yDirection = 2;
+let score = 0;
 
 const userStart = [230, 10]
 let currentPosition = userStart;
@@ -20,6 +21,8 @@ let currentPosition = userStart;
 const ballStart = [270, 40]
 let ballCurrentPosition = ballStart
 
+let right = true;
+let up = true;
 
 // create Block
 class Block {
@@ -96,8 +99,6 @@ function moveUser(e) {
     }
 }
 
-document.addEventListener('keydown', moveUser)
-
 // add ball
 const ball = document.createElement('div')
 ball.classList.add('ball')
@@ -119,31 +120,49 @@ timerId = setInterval(moveBall, 30)
 // check for collisions
 function checkForCollisions() {
     // check for block collisions
-    for (let i = 0; i < blocks.length; i++)
+    for (let i = 0; i < blocks.length; i++) {
+        if (ballCurrentPosition[0] > blocks[i].bottomLeft[0] && ballCurrentPosition[0] < blocks[i].bottomRight[0] &&
+            ballCurrentPosition[1] + ballDiameter > blocks[i].bottomLeft[1] && ballCurrentPosition[1] < blocks[i].topLeft[1]) { // hits top edge
+                const allBlocks = Array.from(document.querySelectorAll('.block'));
+                allBlocks[i].classList.remove('block');
+                blocks.splice(i, 1)
+                changeDirection();
+                score++;
+                scoreDisplay.innerHTML = score;
+            }
 
+            if (blocks.length == 0) {
+                scoreDisplay.innerHTML = 'YOU WIN'
+                clearInterval(timerId)
+                document.removeEventListener('keydown', moveUser())
+            }
+        
+    }
+    // wall collisions
+    if (ballCurrentPosition[0] >= (boardWidth - ballDiameter) || ballCurrentPosition[1] >= (boardHeight - ballDiameter) || ballCurrentPosition <= 0) {
+        changeDirection()
+    }
 
-    // check for wall collisions
-    if (ballCurrentPosition[0] >= (boardWidth - ballDiameter)) { // right side
-        if (xDirection === 2 && yDirection === 2) {
-            xDirection = -2;
-        } else if (xDirection === 2 && yDirection === -2) {
-            xDirection = -2;
+    // check for uer collisions
+    if ((ballCurrentPosition[0] > currentPosition[0] && ballCurrentPosition[0] < currentPosition + blockWidth) &&
+        (ballCurrentPosition[1] > currentPosition[1] && ballCurrentPosition[1] < currentPosition + blockHeight)) {
+            changeDirection();
         }
-    }
-    if (ballCurrentPosition[1] >= (boardHeight - ballDiameter)) { // top of the box
-        if (xDirection === 2 && yDirection === 2) {
-            yDirection = -2;
-        } else if (xDirection === -2 && yDirection === 2) {
-            yDirection = -2;
-        }
-    }
-    if (ballCurrentPosition[0] <= 0) { // left side of box
-        if (xDirection === -2 && yDirection === 2) {
-            xDirection = 2;
-        } else if (xDirection === -2 && yDirection === -2) {
-            xDirection = 2;
-        }
-    }
+
+    // // check for wall collisions
+    // if (ballCurrentPosition[0] >= boardWidth - ballDiameter && ballCurrentPosition[1] > 0) { // right wall
+    //     switchHorizontal(right);
+    // }
+    // if (ballCurrentPosition[1] >= boardHeight - ballDiameter) { // top wall
+    //     switchHorizontal(up);
+    // }
+    // if (ballCurrentPosition[0] <= boardWidth - ballDiameter && ballCurrentPosition[1] > 0) { // left wall
+    //     switchHorizontal(!right);
+    // }
+    // if (ballCurrentPosition[1] <= 0) { // bottom
+    //     // GAME OVER
+    // }
+    
 
     // check gameOver
     if (ballCurrentPosition[1] <= 0) {
@@ -153,21 +172,50 @@ function checkForCollisions() {
     }
 }
 
-// function changeDirection() {
-//     if (xDirection === 2 && yDirection === 2) { // top part of wall
-//         yDirection = -2;
-//         return;
-//     }
-//     if (xDirection === 2 && yDirection === -2) { // left side of board coming down
+// function switchHorizontal(right) {
+//     if (right) { // switch from R to L
 //         xDirection = -2;
+//         right = !right;
 //         return;
 //     }
-//     if (xDirection === -2 && yDirection === -2) { // top of board
-//         yDirection = 2;
-//         return;
-//     }
-//     if (xDirection === -2 && yDirection === 2) {
+//     if (!right) {// switch from L to R
 //         xDirection = 2;
+//         right = !right;
+//         return;
+//     }
+    
+// }
+
+// function switchVertical(up) {
+//     if (up) { // switch from U to D
+//         yDirection = -2;
+//         up = !up;
+//         return;
+//     }
+//     if (!up) { // switch from U to D
+//         yDirection = 2;
+//         up = !up;
 //         return;
 //     }
 // }
+
+
+// change direction function
+function changeDirection() {
+    if (xDirection === 2 && yDirection === 2) {
+        yDirection = -2;
+        return;
+    }
+    if (xDirection === 2 && yDirection === -2) {
+        xDirection = -2;
+        return;
+    }
+    if (xDirection === 2 && yDirection === -2) {
+        yDirection = 2;
+        return;
+    }
+    if (xDirection === -2 && yDirection === 2) {
+        xDirection = 2;
+        return;
+    }
+}
