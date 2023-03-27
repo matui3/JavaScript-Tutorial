@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const displaycurrentPlayer = document.querySelector('#current-player')
     let currentPlayer = 1;
 
-    const winningArrays = [
+    const winnerArrays = [
         [0, 1, 2, 3],
         [41, 40, 39, 38],
         [7, 8, 9, 10],
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
 
     function checkBoard() {
-        for (let y = 0; y  < winningArrays.length; y++) {
+        for (let y = 0; y  < winnerArrays.length; y++) {
             const square1 = squares[winnerArrays[y][0]]
             const square2 = squares[winnerArrays[y][1]]
             const square3 = squares[winnerArrays[y][2]]
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < squares.length; i++) {
         squares[i].onclick = () => {
             // if square below your current square is taken, you can go on top of it
-            if (squares[i + 7].classList.contains('taken') && squares[i].classList.contains('taken')) {
+            if (squares[i + 7].classList.contains('taken') && !squares[i].classList.contains('taken')) {
                 if (currentPlayer == 1) {
                     squares[i].classList.add('taken')
                     squares[i].classList.add('player-one')
